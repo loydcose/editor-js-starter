@@ -4,12 +4,33 @@ import React, { useEffect, useState } from "react";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import EditorJS from "@editorjs/editorjs";
+import SimpleImage from "@editorjs/simple-image";
+import Checklist from "@editorjs/checklist";
+import Code from "@editorjs/code";
+import RawCode from "@editorjs/raw";
+import InlineImage from "editorjs-inline-image";
 
 export default function Editor() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     if (!isMounted) return;
+
+    const getEditorData = () => {
+      const data = localStorage.getItem("editorData");
+      if (data) {
+        const parsedData = JSON.parse(data);
+        if (
+          parsedData ||
+          parsedData?.blocks ||
+          parsedData?.time ||
+          parsedData?.version
+        ) {
+          return parsedData;
+        }
+      }
+      return {};
+    };
 
     const editor = new EditorJS({
       autofocus: true,
@@ -18,8 +39,8 @@ export default function Editor() {
         console.log("Editor.js is ready to work!");
       },
       onChange: async (api, event) => {
-        console.log({ api, event });
         const data = await editor.save();
+        localStorage.setItem("editorData", JSON.stringify(data));
         console.log(data);
       },
       tools: {
@@ -28,7 +49,7 @@ export default function Editor() {
           inlineToolbar: true,
           config: {
             placeholder: "Enter a header",
-            levels: [2, 3, 4],
+            levels: [1, 2, 3, 4, 5, 6],
             defaultLevel: 3,
           },
         },
@@ -39,43 +60,29 @@ export default function Editor() {
             defaultStyle: "unordered",
           },
         },
+        image: SimpleImage,
+        inlineImage: {
+          class: InlineImage,
+          inlineToolbar: true,
+          config: {
+            embed: {
+              display: true,
+            },
+            unsplash: {
+              appName: "your_app_name",
+              apiUrl: "https://your-proxy-api-url.com",
+              maxResults: 30,
+            },
+          },
+        },
+        checklist: {
+          class: Checklist,
+          inlineToolbar: true,
+        },
+        code: Code,
+        rawCode: RawCode,
       },
-      data: {
-        time: 1715157177038,
-        blocks: [
-          {
-            id: "sYe-L7wafA",
-            type: "header",
-            data: {
-              text: "This is a new format fot this one!",
-              level: 2,
-            },
-          },
-          {
-            id: "SJmPQL4_OI",
-            type: "paragraph",
-            data: {
-              text: "and this is another text cool! right?",
-            },
-          },
-          {
-            id: "M-rUl3um9V",
-            type: "paragraph",
-            data: {
-              text: "Hera are my <b>grossary </b>lists:",
-            },
-          },
-          {
-            id: "qqnTqeGd6u",
-            type: "list",
-            data: {
-              style: "unordered",
-              items: ["Apple", "&nbsp;buy egg", "buy something!"],
-            },
-          },
-        ],
-        version: "2.29.1",
-      },
+      data: getEditorData(),
     });
   }, [isMounted]);
 
@@ -92,3 +99,14 @@ export default function Editor() {
     </>
   );
 }
+
+/*
+cool! plugins
+https://github.com/editor-js/awesome-editorjs?tab=readme-ov-file#code
+https://github.com/kommitters/editorjs-inline-image
+https://github.com/editor-js/table
+https://github.com/kaaaaaaaaaaai/editorjs-button
+https://github.com/editor-js/marker
+https://github.com/editor-js/inline-code
+https://unsplash.com/documentation#search-photos
+*/

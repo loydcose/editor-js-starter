@@ -9,9 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@editorjs/checklist": "^1.6.0",
+    "@editorjs/code": "^2.9.0",
     "@editorjs/editorjs": "^2.29.1",
     "@editorjs/header": "^2.8.1",
     "@editorjs/list": "^1.9.0",
+    "@editorjs/raw": "^2.5.0",
+    "@editorjs/simple-image": "^1.6.0",
+    "editorjs-inline-image": "^2.1.1",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
